@@ -42,3 +42,26 @@ if st.button("Predict next 15 min"):
     st.metric("Predicted inflow (next interval)", f"{pred:.0f} passengers")
     st.write(f"Crowding level: **{band}**")
     st.caption(f"(Actual recorded inflow that interval: {actual})")
+    # --- Recent flow chart ---
+    import matplotlib.pyplot as plt
+
+    # get the 12 intervals (3 hours) leading up to and including the chosen moment
+    chosen_ts = pd.to_datetime(chosen)
+    history = station_rows[station_rows["interval"] <= chosen_ts].tail(12)
+
+    fig, ax = plt.subplots(figsize=(9, 3.5))
+    ax.plot(history["interval"], history["inflow"],
+            marker="o", label="recent inflow", color="#2980b9")
+
+    # the prediction: one interval after the chosen time
+    next_ts = chosen_ts + pd.Timedelta(minutes=15)
+    ax.scatter([next_ts], [pred], color="#e74c3c", s=120, zorder=5,
+               label="prediction (next 15 min)")
+
+    ax.set_title(f"Station {station} — recent inflow and next-interval forecast")
+    ax.set_ylabel("passengers entering")
+    ax.set_xlabel("time")
+    ax.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    st.pyplot(fig)
