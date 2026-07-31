@@ -48,3 +48,16 @@ Then run the notebooks in order:
 - **Tracking:** MLflow (3 logged runs)
 
 ## Repository structure
+data/processed/ aggregated 15-min flow tables
+notebooks/ pipeline notebooks (01–04)
+artifacts/ saved model + loading docs
+reports/ Model Gate evidence + figures
+
+## Limitations
+- 25 days of data — captures intra-day and weekly patterns, not seasonality.
+- Trained on Hangzhou; does not transfer directly to Tashkent (different
+  topology, ridership culture, calendar). Tashkent is motivation, not a
+  deployment claim.
+
+## License
+Code: for educational use. Data: CC-BY 4.0 (Hangzhou Metro / Tianchi).
