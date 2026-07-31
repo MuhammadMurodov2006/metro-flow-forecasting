@@ -1,6 +1,6 @@
 # project-specific
 metro/
-data/
+data/raw/
 .ipynb_checkpoints/
 
 # Byte-compiled / optimized / DLL files
@@ -221,3 +221,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+mlflow.db
+mlruns/
