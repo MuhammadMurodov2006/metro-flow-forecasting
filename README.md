@@ -1,5 +1,7 @@
 # Metro Passenger Flow Forecasting
 
+**🔗 Live demo:** https://metro-flow-forecasting.streamlit.app
+
 Short-term (15-minute) metro passenger inflow forecasting for station-level
 crowd management. AI/ML Fundamentals Capstone.
 
@@ -8,13 +10,16 @@ passengers will enter that station in the next 15-minute interval — giving
 operators lead time to act before congestion forms.
 
 ## Results
-| Model | Validation MAE | Test MAE |
-|---|---|---|
-| Historical Average (baseline) | 29.34 | 37.55 |
-| Ridge regression | 29.29 | 39.29 |
-| **XGBoost (selected)** | **22.42** | **25.75** |
+| Model | Target | Validation MAE | Test MAE |
+|---|---|---|---|
+| Historical Average (baseline) | inflow | 29.34 | 37.55 |
+| Ridge regression | inflow | 29.29 | 39.29 |
+| **XGBoost (selected)** | inflow | **22.42** | **25.75** |
+| XGBoost | outflow | 21.23 | 23.79 |
 
-XGBoost beats the baseline by ~24% on validation MAE.
+XGBoost beats the baseline by ~24% on validation MAE. A symmetric outflow model
+(same pipeline, outflow lags) was also trained; outflow predicts slightly better,
+likely because exits are driven by scheduled train arrivals.
 
 ## Data
 HZMetro (Hangzhou Metro), Zenodo DOI 10.5281/zenodo.3145404, CC-BY 4.0.
