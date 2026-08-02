@@ -113,9 +113,9 @@ if st.button("Predict next 15 min"):
             fig2, ax2 = plt.subplots(figsize=(16, 12))
             nx.draw_networkx_edges(G, pos, ax=ax2, edge_color="#bbbbbb", width=1.2)
             nx.draw_networkx_nodes(G, pos, ax=ax2, node_color=colors,
-                                   node_size=700, edgecolors="#333333", linewidths=0.8)
-            nx.draw_networkx_labels(G, pos, ax=ax2, labels=labels, font_size=7,
-                                    font_color="black")
+                                   node_size=1400, edgecolors="#222222", linewidths=1.2)
+            nx.draw_networkx_labels(G, pos, ax=ax2, labels=labels, font_size=8,
+                                    font_color="black", font_weight="bold")
             ax2.set_title(f"Network {name} crowding — {chosen}", fontsize=15, fontweight="bold")
             ax2.legend(handles=legend_handles, loc="upper left", fontsize=10, framealpha=0.9)
             ax2.axis("off")
