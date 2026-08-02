@@ -26,10 +26,21 @@ Test set touched once, after selection. Test MAE: 25.75.
 XGBoost beats Historical Average by ~24% on validation MAE (22.42 vs 29.34)
 and on test MAE (25.75 vs 37.55).
 
-## 7. Error analysis
-[fill in your peak/off-peak and busy/quiet findings — see notebook 04]
-Morning peak hardest (MAE 46); quiet stations highest relative error (~16%).
+## 6a. Extension: Outflow model
+A symmetric XGBoost model was trained to predict outflow (using outflow lags):
+val MAE 21.23, test MAE 23.79. Both models are served in the deployed Streamlit
+app (https://metro-flow-forecasting.streamlit.app) with an inflow/outflow/both
+selector. Outflow is slightly more predictable than inflow, consistent with
+exits being driven by scheduled train arrivals.
 
+## 7. Error analysis
+Error broken down on the test set:
+- By time: morning peak hardest (MAE ~46), evening peak ~36, off-peak ~19.
+  Normalized by volume the error rate is fairly consistent (~11–16%).
+- By station: busy stations higher absolute MAE (~34) but quiet stations
+  have the highest *relative* error (~16%), which is why MAPE was reported
+  with caution for low-count intervals.
+See notebook 04_error_analysis.ipynb.
 ## 8. Inference artifact
 artifacts/metro_xgb_model.joblib — bundles model + feature list.
 
