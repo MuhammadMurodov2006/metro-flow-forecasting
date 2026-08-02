@@ -14,6 +14,13 @@ def load_models():
 def load_data():
     return pd.read_csv("data/processed/flow_features.csv", parse_dates=["interval"])
 
+@st.cache_data
+def load_names():
+    n = pd.read_csv("data/station_names.csv")
+    return dict(zip(n["stationID"], n["name"]))
+
+station_names = load_names()
+
 inflow_art, outflow_art = load_models()
 df = load_data()
 
@@ -23,7 +30,11 @@ st.write("Predict passenger flow for the next 15-minute interval at a station.")
 # mode selector
 mode = st.radio("Show:", ["Inflow only", "Outflow only", "Both"], horizontal=True)
 
-station = st.selectbox("Station", sorted(df["stationID"].unique()))
+station = st.selectbox(
+    "Station",
+    sorted(df["stationID"].unique()),
+    format_func=lambda sid: f"{station_names.get(sid, sid)} (#{sid})"
+)
 station_rows = df[df["stationID"] == station].sort_values("interval")
 times = station_rows["interval"].dt.strftime("%Y-%m-%d %H:%M").tolist()
 chosen = st.selectbox("Current time", times, index=len(times)//2)
@@ -68,7 +79,7 @@ if st.button("Predict next 15 min"):
     for tcol, name, art, color in show:
         ax.plot(history["interval"], history[tcol], marker="o", label=name, color=color)
         ax.scatter([next_ts], [preds[tcol]], color=color, s=140, edgecolor="black", zorder=5)
-    ax.set_title(f"Station {station} — recent flow with forecast")
+    ax.set_title(f"{station_names.get(station, station)} (#{station}) — recent flow with forecast")
     ax.set_ylabel("passengers"); ax.set_xlabel("time"); ax.legend()
     plt.xticks(rotation=45); plt.tight_layout()
     st.pyplot(fig)
