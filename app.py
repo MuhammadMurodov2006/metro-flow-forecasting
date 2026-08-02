@@ -85,19 +85,39 @@ if st.button("Predict next 15 min"):
     st.pyplot(fig)
 
     # network map(s)
+   # network map(s)
     all_now = df[df["interval"] == chosen_ts].copy()
     if not all_now.empty:
+        import matplotlib.patches as mpatches
+
         adj = pd.read_csv("data/Metro_roadMap.csv", index_col=0)
         adj.columns = adj.columns.astype(int)
         G = nx.from_pandas_adjacency(adj)
-        pos = nx.spring_layout(G, seed=42)
+        # more spacing: higher k pushes nodes apart, more iterations settles them
+        pos = nx.spring_layout(G, seed=42, k=0.9, iterations=200)
+
+        legend_handles = [
+            mpatches.Patch(color="#27ae60", label="Low (<100)"),
+            mpatches.Patch(color="#f1c40f", label="Medium (100–300)"),
+            mpatches.Patch(color="#e74c3c", label="High (>300)"),
+            mpatches.Patch(color="#cccccc", label="No data"),
+        ]
+
         for tcol, name, art, color in show:
             all_now["pred"] = art["model"].predict(all_now[art["features"]])
             pmap = dict(zip(all_now["stationID"], all_now["pred"]))
             colors = [crowd_color(pmap.get(int(n))) for n in G.nodes()]
-            fig2, ax2 = plt.subplots(figsize=(11, 8))
-            nx.draw(G, pos, ax=ax2, node_color=colors, node_size=250,
-                    edge_color="#888888", with_labels=True, font_size=7)
-            ax2.set_title(f"Network {name} map — predicted at {chosen}")
+            # name labels instead of raw IDs
+            labels = {n: station_names.get(int(n), str(n)) for n in G.nodes()}
+
+            fig2, ax2 = plt.subplots(figsize=(16, 12))
+            nx.draw_networkx_edges(G, pos, ax=ax2, edge_color="#bbbbbb", width=1.2)
+            nx.draw_networkx_nodes(G, pos, ax=ax2, node_color=colors,
+                                   node_size=700, edgecolors="#333333", linewidths=0.8)
+            nx.draw_networkx_labels(G, pos, ax=ax2, labels=labels, font_size=7,
+                                    font_color="black")
+            ax2.set_title(f"Network {name} crowding — {chosen}", fontsize=15, fontweight="bold")
+            ax2.legend(handles=legend_handles, loc="upper left", fontsize=10, framealpha=0.9)
+            ax2.axis("off")
+            plt.tight_layout()
             st.pyplot(fig2)
-        st.caption("🟢 Low (<100)  🟡 Medium (100–300)  🔴 High (>300)")
